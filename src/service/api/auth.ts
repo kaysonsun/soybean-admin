@@ -1,4 +1,18 @@
-import { mockRequest } from '../request';
+import {mockRequest, request} from '../request';
+
+/**
+ *登录
+ * @param username
+ * @param password
+ */
+export function loginUser(username: string, password: string) {
+	return request.post<ApiAuth.Token>('/public/login', {username, password});
+}
+
+/** 获取用户信息 */
+export function fetchUserInfo() {
+	return request.get<ApiAuth.UserInfo>('/user/info');
+}
 
 /**
  * 获取验证码
@@ -6,7 +20,7 @@ import { mockRequest } from '../request';
  * @returns - 返回boolean值表示是否发送成功
  */
 export function fetchSmsCode(phone: string) {
-  return mockRequest.post<boolean>('/getSmsCode', { phone });
+	return mockRequest.post<boolean>('/getSmsCode', {phone});
 }
 
 /**
@@ -15,13 +29,9 @@ export function fetchSmsCode(phone: string) {
  * @param password - 密码
  */
 export function fetchLogin(userName: string, password: string) {
-  return mockRequest.post<ApiAuth.Token>('/login', { userName, password });
+	return mockRequest.post<ApiAuth.Token>('/login', {userName, password});
 }
 
-/** 获取用户信息 */
-export function fetchUserInfo() {
-  return mockRequest.get<ApiAuth.UserInfo>('/getUserInfo');
-}
 
 /**
  * 获取用户路由数据
@@ -29,7 +39,7 @@ export function fetchUserInfo() {
  * @description 后端根据用户id查询到对应的角色类型，并将路由筛选出对应角色的路由数据返回前端
  */
 export function fetchUserRoutes(userId: string) {
-  return mockRequest.post<ApiRoute.Route>('/getUserRoutes', { userId });
+	return mockRequest.post<ApiRoute.Route>('/getUserRoutes', {userId});
 }
 
 /**
@@ -37,5 +47,5 @@ export function fetchUserRoutes(userId: string) {
  * @param refreshToken
  */
 export function fetchUpdateToken(refreshToken: string) {
-  return mockRequest.post<ApiAuth.Token>('/updateToken', { refreshToken });
+	return mockRequest.post<ApiAuth.Token>('/updateToken', {refreshToken});
 }

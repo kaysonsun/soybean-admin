@@ -741,7 +741,7 @@ const gaugeOptions = ref<ECOption>({
   ]
 }) as Ref<ECOption>;
 
-let intervalId: NodeJS.Timeout;
+let intervalId: NodeJS.Timer;
 const { domRef: gaugeRef } = useEcharts(gaugeOptions, chart => {
   intervalId = setInterval(() => {
     const date = new Date();

@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const src = ref('https://admin-docs.soybeanjs.cn/');
+const src = ref('https://docs.soybean.pro/');
 </script>
 
 <style scoped></style>

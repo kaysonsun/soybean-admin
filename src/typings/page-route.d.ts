@@ -53,6 +53,10 @@ declare namespace PageRoute {
     | 'management_role'
     | 'management_route'
     | 'management_user'
+    | 'message'
+    | 'message_email-config'
+    | 'message_list'
+    | 'message_sms-config'
     | 'multi-menu'
     | 'multi-menu_first'
     | 'multi-menu_first_second-new'
@@ -70,7 +74,17 @@ declare namespace PageRoute {
     | 'plugin_map'
     | 'plugin_print'
     | 'plugin_swiper'
-    | 'plugin_video';
+    | 'plugin_video'
+    | 'status'
+    | 'status_license'
+    | 'status_running'
+    | 'sys'
+    | 'sys_dept'
+    | 'sys_log'
+    | 'sys_role'
+    | 'video'
+    | 'video_group'
+    | 'video_source';
 
   /**
    * last degree route key, which has the page file
@@ -108,6 +122,9 @@ declare namespace PageRoute {
     | 'management_role'
     | 'management_route'
     | 'management_user'
+    | 'message_email-config'
+    | 'message_list'
+    | 'message_sms-config'
     | 'multi-menu_first_second-new_third'
     | 'multi-menu_first_second'
     | 'plugin_charts_antv'
@@ -120,5 +137,12 @@ declare namespace PageRoute {
     | 'plugin_print'
     | 'plugin_swiper'
     | 'plugin_video'
+    | 'status_license'
+    | 'status_running'
+    | 'sys_dept'
+    | 'sys_log'
+    | 'sys_role'
+    | 'video_group'
+    | 'video_source'
   >;
 }

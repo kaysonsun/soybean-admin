@@ -1,9 +1,9 @@
 <template>
-	<n-space :vertical="true" :size="16">
-		<data-card/>
-		<top-chart/>
-		<!--    <bottom-part />-->
-	</n-space>
+  <n-space :vertical="true" :size="16">
+    <data-card/>
+    <top-chart/>
+<!--    <bottom-part/>-->
+  </n-space>
 </template>
 
 <script lang="ts" setup>

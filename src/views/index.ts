@@ -34,6 +34,9 @@ export const views: Record<
   management_role: () => import('./management/role/index.vue'),
   management_route: () => import('./management/route/index.vue'),
   management_user: () => import('./management/user/index.vue'),
+  'message_email-config': () => import('./message/email-config/index.vue'),
+  message_list: () => import('./message/list/index.vue'),
+  'message_sms-config': () => import('./message/sms-config/index.vue'),
   'multi-menu_first_second-new_third': () => import('./multi-menu/first/second-new/third/index.vue'),
   'multi-menu_first_second': () => import('./multi-menu/first/second/index.vue'),
   plugin_charts_antv: () => import('./plugin/charts/antv/index.vue'),
@@ -45,5 +48,12 @@ export const views: Record<
   plugin_map: () => import('./plugin/map/index.vue'),
   plugin_print: () => import('./plugin/print/index.vue'),
   plugin_swiper: () => import('./plugin/swiper/index.vue'),
-  plugin_video: () => import('./plugin/video/index.vue')
+  plugin_video: () => import('./plugin/video/index.vue'),
+  status_license: () => import('./status/license/index.vue'),
+  status_running: () => import('./status/running/index.vue'),
+  sys_dept: () => import('./sys/dept/index.vue'),
+  sys_log: () => import('./sys/log/index.vue'),
+  sys_role: () => import('./sys/role/index.vue'),
+  video_group: () => import('./video/group/index.vue'),
+  video_source: () => import('./video/source/index.vue')
 };
