@@ -7,11 +7,11 @@
     </div>
     <header-menu v-else />
     <div class="flex justify-end h-full">
-      <global-search />
-      <github-site />
+<!--      <global-search />-->
+<!--      <github-site />-->
       <full-screen />
       <theme-mode />
-      <toggle-lang />
+<!--      <toggle-lang />-->
       <system-message />
       <setting-button v-if="showButton" />
       <user-avatar />
