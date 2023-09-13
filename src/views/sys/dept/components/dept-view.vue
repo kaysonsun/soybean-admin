@@ -27,6 +27,7 @@
           key-field="id"
           label-field="deptName"
           block-line
+          :render-suffix="renderSuffix"
           @update-selected-keys="deptSelected"
       />
     </n-space>
@@ -35,10 +36,11 @@
 
 <script setup lang="ts">
 
-import {NButton, NSpace} from "naive-ui";
-import {onMounted, ref} from "vue";
+import {NButton, NIcon, NSpace, TreeOption} from "naive-ui";
+import {h, onMounted, ref} from "vue";
 import {fetchDeptTree} from "@/service/api/sys/dept";
 import {useDeptStore} from "@/store/modules/sys/dept";
+import SvgIcon from "@/components/custom/svg-icon.vue";
 //部门树搜索值
 const deptNamePattern = ref('')
 //搜索状态显示无关节点
@@ -62,6 +64,53 @@ const deptSelected = (keys, options) => {
   deptStoreInfo.deptId = keys[0];
 };
 
+const renderLabel = ({option}: { option: TreeOption }) => {
+  return h('div', {class: 'tree-lable'}, {default: () => option.deptName});
+};
+
+const renderSuffix = ({option}: { option: TreeOption }) => {
+  return h('div', {class: 'fl', style: 'display:flex'}, [
+    h(NButton, {
+      text: true,
+      type: 'primary',
+      renderIcon() {
+        return h(NIcon, null, {
+          default: () => h(SvgIcon, {icon: 'material-symbols:preview'})
+        });
+      },
+      onclick: (e: Event) => {
+        e.stopPropagation();
+        // lookDept(option);
+      }
+    }),
+    h(NButton, {
+      text: true,
+      type: 'warning',
+      renderIcon() {
+        return h(NIcon, null, {
+          default: () => h(SvgIcon, {icon: 'material-symbols:box-edit-outline'})
+        });
+      },
+      onclick: (e: Event) => {
+        e.stopPropagation();
+        // editDept(option);
+      }
+    }),
+    h(NButton, {
+      text: true,
+      type: 'error',
+      renderIcon() {
+        return h(NIcon, null, {
+          default: () => h(SvgIcon, {icon: 'material-symbols:delete-outline'})
+        });
+      },
+      onclick: (e: Event) => {
+        e.stopPropagation();
+        // handleDeleteDept(option);
+      }
+    })
+  ]);
+};
 onMounted(() => {
   getDeptTree()
 })
