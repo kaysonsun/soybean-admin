@@ -34,7 +34,10 @@
   </n-card>
 
   <!-- 新增编辑部门弹窗 -->
-  <dept-modal v-model:deptVisible="deptVisible" :type="deptModalType" @update=""></dept-modal>
+  <dept-modal @update=""
+              :dept-detail="deptDetail"
+              :type="deptModalType"
+              :dept-tree="deptTree"></dept-modal>
 </template>
 
 <script setup lang="ts">
@@ -58,6 +61,14 @@ const deptModalType = ref<'view' | 'add' | 'edit'>('view');
 const deptTree = ref<Array<AdminDept.DeptVO>>([])
 //选中的dept暂存
 const deptStoreInfo = useDeptStore();
+
+let deptDetail = ref<AdminDept.Dept>({
+  deptName: '',
+  id: 0,
+  parentId: 0,
+  sortNum: 0,
+  description: ''
+})
 
 //获取组织架构树
 const getDeptTree = async () => {
@@ -119,8 +130,9 @@ const renderSuffix = ({option}: { option: TreeOption }) => {
 };
 //查看部门
 const viewDept = (e: AdminDept.Dept) => {
-  deptVisible.value = true;
+  console.log("VIEW-DEPT")
   deptModalType.value = 'view';
+  deptDetail = e
 };
 onMounted(() => {
   getDeptTree()
