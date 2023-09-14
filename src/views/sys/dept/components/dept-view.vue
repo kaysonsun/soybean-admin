@@ -32,6 +32,9 @@
       />
     </n-space>
   </n-card>
+
+  <!-- 新增编辑部门弹窗 -->
+  <dept-modal v-model:deptVisible="deptVisible" :type="deptModalType" @update=""></dept-modal>
 </template>
 
 <script setup lang="ts">
@@ -41,13 +44,16 @@ import {h, onMounted, ref} from "vue";
 import {fetchDeptTree} from "@/service/api/sys/dept";
 import {useDeptStore} from "@/store/modules/sys/dept";
 import SvgIcon from "@/components/custom/svg-icon.vue";
+import DeptModal from "@/views/sys/dept/components/dept-modal.vue";
 //部门树搜索值
 const deptNamePattern = ref('')
 //搜索状态显示无关节点
 const showIrrelevantNodes = ref(false)
 //部门树加载标识
 const deptTreeLoading = ref(false)
-
+//部门编辑弹窗
+const deptVisible = ref(false)
+const deptModalType = ref<'view' | 'add' | 'edit'>('view');
 //组织架构树
 const deptTree = ref<Array<AdminDept.DeptVO>>([])
 //选中的dept暂存
@@ -80,7 +86,7 @@ const renderSuffix = ({option}: { option: TreeOption }) => {
       },
       onclick: (e: Event) => {
         e.stopPropagation();
-        // lookDept(option);
+        viewDept(option);
       }
     }),
     h(NButton, {
@@ -110,6 +116,11 @@ const renderSuffix = ({option}: { option: TreeOption }) => {
       }
     })
   ]);
+};
+//查看部门
+const viewDept = (e: AdminDept.Dept) => {
+  deptVisible.value = true;
+  deptModalType.value = 'view';
 };
 onMounted(() => {
   getDeptTree()
