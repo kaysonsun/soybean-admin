@@ -34,8 +34,8 @@
   </n-card>
 
   <!-- 新增编辑部门弹窗 -->
-  <dept-modal @update=""
-              :dept-detail="deptDetail"
+  <dept-modal ref="deptModalRef"
+              @update="deptUpdate"
               :type="deptModalType"
               :dept-tree="deptTree"></dept-modal>
 </template>
@@ -62,6 +62,8 @@ const deptTree = ref<Array<AdminDept.DeptVO>>([])
 //选中的dept暂存
 const deptStoreInfo = useDeptStore();
 
+const deptModalRef = ref(DeptModal);
+
 let deptDetail = ref<AdminDept.Dept>({
   deptName: '',
   id: 0,
@@ -79,6 +81,13 @@ const getDeptTree = async () => {
 //选择Dept
 const deptSelected = (keys, options) => {
   deptStoreInfo.deptId = keys[0];
+};
+
+//部门树更新hook
+const deptUpdate = (e: 'confirm' | 'cancel') => {
+  if (e === 'confirm') {
+    getDeptTree();
+  }
 };
 
 const renderLabel = ({option}: { option: TreeOption }) => {
@@ -130,7 +139,7 @@ const renderSuffix = ({option}: { option: TreeOption }) => {
 };
 //查看部门
 const viewDept = (e: AdminDept.Dept) => {
-  console.log("VIEW-DEPT")
+  deptModalRef.value.action(e.id)
   deptModalType.value = 'view';
   deptDetail = e
 };

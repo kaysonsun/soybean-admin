@@ -13,7 +13,6 @@
         <n-grid :cols="24" :x-gap="18">
           <n-form-item-grid-item :span="24" label="父级部门: ">
             <n-tree-select
-                :key="formModel.id"
                 :default-value="formModel.parentId"
                 filterable
                 key-field="id"
@@ -21,7 +20,7 @@
                 :disabled="props.type !== 'add'"
                 :options="props.deptTree"
                 clearable
-                placeholder="请选择父级部门"
+                :placeholder="formModel.parentId===0?'根目录':'请选择父级部门'"
                 @update:value="handleUpdateParent"
             />
           </n-form-item-grid-item>
@@ -56,7 +55,8 @@
 import {computed, ref, onMounted, onUpdated} from 'vue';
 import type {FormInst} from 'naive-ui';
 import {useMessage} from 'naive-ui';
-import {addDept, editDept, fetchDeptDetail, fetchDeptTree} from "@/service/api/sys/dept";
+import {addDept, editDept, fetchDeptDetail} from "@/service/api/sys/dept";
+
 
 const message = useMessage();
 
@@ -67,7 +67,6 @@ const onlyAllowNumber = (value: string) => {
 export interface Props {
   // deptVisible: boolean;
   type: 'view' | 'add' | 'edit';
-  deptDetail: AdminDept.Dept;
   deptTree: Array<AdminDept.DeptVO>
 }
 
@@ -92,14 +91,6 @@ const title = computed(() => {
   };
   return titles[props.type];
 });
-// const modalVisible = computed({
-//   get() {
-//     return props.deptVisible;
-//   },
-//   set(deptVisible) {
-//     emit('update:deptVisible', deptVisible);
-//   }
-// });
 
 const modalVisible = ref<boolean>(false)
 
@@ -109,11 +100,18 @@ const rules = {
   deptName: {required: true, message: '请输入部门名称'}
 };
 
-const formModel = ref<any>({
-  parentId: '',
+const formModel = ref<AdminDept.Dept>({
+  id: 0,
+  createBy: 0,
+  updateBy: 0,
+  createTime: '',
+  updateTime: '',
+  deleted: false,
+  version: 0,
+  parentId: 0,
   deptName: '',
-  sortNum: '',
-  description: ''
+  sortNum: 0,
+  description: '',
 });
 const formModelInit = ref<any>({
   parentId: '',
@@ -155,23 +153,26 @@ const handleSubmit = () => {
   });
 };
 // 树结构值变化
-const handleUpdateParent = (value: string | number | Array<string | number> | null) => {
+const handleUpdateParent = (value: number) => {
   formModel.value.parentId = value;
 };
 
 /** 获取部门详情 */
-const getDeptDetail = async () => {
-  const {data} = await fetchDeptDetail(props.deptDetail.id);
+const getDeptDetail = async (deptId: number) => {
+  const {data} = await fetchDeptDetail(deptId);
   formModel.value = data;
-  formModel.value.sortNum = formModel.value.sortNum.toString();
 };
 
-onUpdated(() => {
-  console.log("UPDATE")
+const action = async (deptId: number) => {
   if (props.type !== 'add') {
-    getDeptDetail();
+    await getDeptDetail(deptId);
   }
-});
+  console.log(formModel.value.parentId)
+  modalVisible.value = true
+}
+
+
+defineExpose({action})
 </script>
 
 <style scoped></style>

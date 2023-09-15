@@ -8,7 +8,14 @@ declare namespace AdminDept {
         children: Array<object>;
     }
 
-    interface Dept extends Base.BaseEntity {
+    interface Dept {
+        id: number;
+        createBy: number;
+        updateBy: number;
+        createTime: string;
+        updateTime: string;
+        deleted: boolean;
+        version: number;
         parentId: number;
         deptName: string;
         sortNum: number;
