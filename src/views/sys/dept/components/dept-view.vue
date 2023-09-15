@@ -119,7 +119,7 @@ const renderSuffix = ({option}: { option: TreeOption }) => {
       },
       onclick: (e: Event) => {
         e.stopPropagation();
-        // editDept(option);
+        editDept(option);
       }
     }),
     h(NButton, {
@@ -139,8 +139,14 @@ const renderSuffix = ({option}: { option: TreeOption }) => {
 };
 //查看部门
 const viewDept = (e: AdminDept.Dept) => {
-  deptModalRef.value.action(e.id)
   deptModalType.value = 'view';
+  deptModalRef.value.action(e.id)
+  deptDetail = e
+};
+//编辑部门
+const editDept = (e: AdminDept.Dept) => {
+  deptModalType.value = 'edit';
+  deptModalRef.value.action(e.id)
   deptDetail = e
 };
 onMounted(() => {

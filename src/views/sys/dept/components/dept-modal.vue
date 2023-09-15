@@ -17,7 +17,7 @@
                 filterable
                 key-field="id"
                 label-field="deptName"
-                :disabled="props.type !== 'add'"
+                :disabled="!isAdd"
                 :options="props.deptTree"
                 clearable
                 :placeholder="formModel.parentId===0?'根目录':'请选择父级部门'"
@@ -25,21 +25,27 @@
             />
           </n-form-item-grid-item>
           <n-form-item-grid-item :span="24" label="部门名称:" path="deptName">
-            <n-text v-if="props.type == 'view'">{{ formModel.deptName }}</n-text>
-            <n-input v-else v-model:value="formModel.deptName" placeholder="请输入部门名称" clearable maxlength="32"/>
+            <n-input :value="formModel.deptName"
+                     placeholder="请输入部门名称"
+                     :disabled="isView"
+                     :clearable="!isView"
+                     maxlength="32"/>
           </n-form-item-grid-item>
           <n-form-item-grid-item :span="24" label="排序号: ">
-            <n-text v-if="props.type == 'view'">{{ formModel.sortNum }}</n-text>
             <n-input
-                v-else
-                v-model:value="formModel.sortNum"
+                :value="formModel.sortNum"
                 placeholder="请输入排序号"
+                :disabled="isView"
+                :clearable="!isView"
                 :allow-input="onlyAllowNumber"
             />
           </n-form-item-grid-item>
           <n-form-item-grid-item :span="24" label="描述: " path="description">
-            <n-text v-if="props.type == 'view'">{{ formModel.description }}</n-text>
-            <n-input v-else v-model:value="formModel.description" type="textarea"/>
+            <n-input
+                :value="formModel.description"
+                :disabled="isView"
+                :clearable="!isView"
+                type="textarea"/>
           </n-form-item-grid-item>
         </n-grid>
         <n-space v-if="props.type !== 'view'" class="w-full pt-16px" :size="24" justify="end">
@@ -57,7 +63,6 @@ import type {FormInst} from 'naive-ui';
 import {useMessage} from 'naive-ui';
 import {addDept, editDept, fetchDeptDetail} from "@/service/api/sys/dept";
 
-
 const message = useMessage();
 
 const onlyAllowNumber = (value: string) => {
@@ -65,19 +70,15 @@ const onlyAllowNumber = (value: string) => {
 };
 
 export interface Props {
-  // deptVisible: boolean;
   type: 'view' | 'add' | 'edit';
   deptTree: Array<AdminDept.DeptVO>
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  // deptVisible: false,
   type: 'view'
 });
 
 interface Emits {
-  // (e: 'update:deptVisible', deptVisible: boolean): void;
-
   (e: 'update', status: 'confirm' | 'cancel'): void;
 }
 
@@ -91,6 +92,16 @@ const title = computed(() => {
   };
   return titles[props.type];
 });
+
+const isView = computed(() => {
+  return props.type === 'view'
+})
+const isAdd = computed(() => {
+  return props.type === 'add'
+})
+const isEdit = computed(() => {
+  return props.type === 'edit'
+})
 
 const modalVisible = ref<boolean>(false)
 
@@ -167,7 +178,6 @@ const action = async (deptId: number) => {
   if (props.type !== 'add') {
     await getDeptDetail(deptId);
   }
-  console.log(formModel.value.parentId)
   modalVisible.value = true
 }
 
