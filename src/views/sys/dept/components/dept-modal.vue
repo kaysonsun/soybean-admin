@@ -33,7 +33,7 @@
           </n-form-item-grid-item>
           <n-form-item-grid-item :span="24" label="排序号: ">
             <n-input
-                :value="formModel.sortNum"
+                :value="formModel.sortNum.toString()"
                 placeholder="请输入排序号"
                 :disabled="isView"
                 :clearable="!isView"
@@ -94,12 +94,15 @@ const title = computed(() => {
 });
 
 const isView = computed(() => {
+  console.log("IS VIEW")
   return props.type === 'view'
 })
 const isAdd = computed(() => {
+  console.log("IS ADD")
   return props.type === 'add'
 })
 const isEdit = computed(() => {
+  console.log("IS EDIT")
   return props.type === 'edit'
 })
 
@@ -125,9 +128,9 @@ const formModel = ref<AdminDept.Dept>({
   description: '',
 });
 const formModelInit = ref<any>({
-  parentId: '',
+  parentId: 0,
   deptName: '',
-  sortNum: '',
+  sortNum: 0,
   description: ''
 });
 
@@ -175,7 +178,7 @@ const getDeptDetail = async (deptId: number) => {
 };
 
 const action = async (deptId: number) => {
-  if (props.type !== 'add') {
+  if (!isAdd) {
     await getDeptDetail(deptId);
   }
   modalVisible.value = true
