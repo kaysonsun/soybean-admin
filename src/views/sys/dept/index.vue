@@ -1,12 +1,14 @@
 <template>
-  <n-grid :x-gap="16" :y-gap="16" :item-responsive="true">
-    <n-grid-item span="0:24 640:24 1024:8">
-      <dept-view></dept-view>
-    </n-grid-item>
-    <n-grid-item span="0:24 640:24 1024:16">
-      <user-view></user-view>
-    </n-grid-item>
-  </n-grid>
+  <div>
+    <n-grid :x-gap="16" :y-gap="16" :item-responsive="true">
+      <n-grid-item span="0:24 640:24 1024:8">
+        <dept-view></dept-view>
+      </n-grid-item>
+      <n-grid-item span="0:24 640:24 1024:16">
+        <user-view></user-view>
+      </n-grid-item>
+    </n-grid>
+  </div>
 </template>
 
 <script lang="ts" setup>

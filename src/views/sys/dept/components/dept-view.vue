@@ -1,43 +1,43 @@
 <template>
-  <n-card :bordered="false" class="rounded-8px shadow-sm">
-    <n-space class="pb-12px" justify="space-between">
-      <n-space>
-        <n-button size="small" type="primary" @click="">
-          <icon-ic-round-plus class="mr-4px text-15px"/>
-          新增
-        </n-button>
-        <n-button size="small" type="error">
-          <icon-ic-round-delete class="mr-4px text-15px"/>
-          删除
-        </n-button>
-      </n-space>
-      <n-space align="center" :size="18">
-        <n-button size="small" type="primary" @click="getDeptTree">
-          <icon-mdi-refresh class="mr-4px text-15px" :class="{ 'animate-spin': deptTreeLoading }"/>
-          刷新
-        </n-button>
-      </n-space>
-    </n-space>
-    <n-space vertical :size="12">
-      <n-input v-model:value="deptNamePattern" placeholder="搜索"/>
-      <n-tree
-          :show-irrelevant-nodes="showIrrelevantNodes"
-          :pattern="deptNamePattern"
-          :data="deptTree"
-          key-field="id"
-          label-field="deptName"
-          block-line
-          :render-suffix="renderSuffix"
-          @update-selected-keys="deptSelected"
-      />
-    </n-space>
-  </n-card>
+	<n-card :bordered="false" class="rounded-8px shadow-sm">
+		<n-space class="pb-12px" justify="space-between">
+			<n-space>
+				<n-button size="small" type="primary" @click="">
+					<icon-ic-round-plus class="mr-4px text-15px"/>
+					新增
+				</n-button>
+				<n-button size="small" type="error">
+					<icon-ic-round-delete class="mr-4px text-15px"/>
+					删除
+				</n-button>
+			</n-space>
+			<n-space align="center" :size="18">
+				<n-button size="small" type="primary" @click="getDeptTree">
+					<icon-mdi-refresh class="mr-4px text-15px" :class="{ 'animate-spin': deptTreeLoading }"/>
+					刷新
+				</n-button>
+			</n-space>
+		</n-space>
+		<n-space vertical :size="12">
+			<n-input v-model:value="deptNamePattern" placeholder="搜索"/>
+			<n-tree
+				:show-irrelevant-nodes="showIrrelevantNodes"
+				:pattern="deptNamePattern"
+				:data="deptTree"
+				key-field="id"
+				label-field="deptName"
+				block-line
+				:render-suffix="renderSuffix"
+				@update-selected-keys="deptSelected"
+			/>
+		</n-space>
+	</n-card>
 
-  <!-- 新增编辑部门弹窗 -->
-  <dept-modal ref="deptModalRef"
-              @update="deptUpdate"
-              :type="deptModalType"
-              :dept-tree="deptTree"></dept-modal>
+	<!-- 新增编辑部门弹窗 -->
+	<dept-modal ref="deptModalRef"
+							@update="deptUpdate"
+							:type="deptModalType"
+							:dept-tree="deptTree"></dept-modal>
 </template>
 
 <script setup lang="ts">
@@ -55,7 +55,6 @@ const showIrrelevantNodes = ref(false)
 //部门树加载标识
 const deptTreeLoading = ref(false)
 //部门编辑弹窗
-const deptVisible = ref(false)
 const deptModalType = ref<'view' | 'add' | 'edit'>('view');
 //组织架构树
 const deptTree = ref<Array<AdminDept.DeptVO>>([])
@@ -65,92 +64,92 @@ const deptStoreInfo = useDeptStore();
 const deptModalRef = ref(DeptModal);
 
 let deptDetail = ref<AdminDept.Dept>({
-  deptName: '',
-  id: 0,
-  parentId: 0,
-  sortNum: 0,
-  description: ''
+	deptName: '',
+	id: 0,
+	parentId: 0,
+	sortNum: 0,
+	description: ''
 })
 
 //获取组织架构树
 const getDeptTree = async () => {
-  const {data} = await fetchDeptTree()
-  deptTree.value = data
+	const {data} = await fetchDeptTree()
+	deptTree.value = data
 }
 
 //选择Dept
 const deptSelected = (keys, options) => {
-  deptStoreInfo.deptId = keys[0];
+	deptStoreInfo.deptId = keys[0];
 };
 
 //部门树更新hook
 const deptUpdate = (e: 'confirm' | 'cancel') => {
-  if (e === 'confirm') {
-    getDeptTree();
-  }
+	if (e === 'confirm') {
+		getDeptTree();
+	}
 };
 
 const renderLabel = ({option}: { option: TreeOption }) => {
-  return h('div', {class: 'tree-lable'}, {default: () => option.deptName});
+	return h('div', {class: 'tree-lable'}, {default: () => option.deptName});
 };
 
 const renderSuffix = ({option}: { option: TreeOption }) => {
-  return h('div', {class: 'fl', style: 'display:flex'}, [
-    h(NButton, {
-      text: true,
-      type: 'primary',
-      renderIcon() {
-        return h(NIcon, null, {
-          default: () => h(SvgIcon, {icon: 'material-symbols:preview'})
-        });
-      },
-      onclick: (e: Event) => {
-        e.stopPropagation();
-        viewDept(option);
-      }
-    }),
-    h(NButton, {
-      text: true,
-      type: 'warning',
-      renderIcon() {
-        return h(NIcon, null, {
-          default: () => h(SvgIcon, {icon: 'material-symbols:box-edit-outline'})
-        });
-      },
-      onclick: (e: Event) => {
-        e.stopPropagation();
-        editDept(option);
-      }
-    }),
-    h(NButton, {
-      text: true,
-      type: 'error',
-      renderIcon() {
-        return h(NIcon, null, {
-          default: () => h(SvgIcon, {icon: 'material-symbols:delete-outline'})
-        });
-      },
-      onclick: (e: Event) => {
-        e.stopPropagation();
-        // handleDeleteDept(option);
-      }
-    })
-  ]);
+	return h('div', {class: 'fl', style: 'display:flex'}, [
+		h(NButton, {
+			text: true,
+			type: 'primary',
+			renderIcon() {
+				return h(NIcon, null, {
+					default: () => h(SvgIcon, {icon: 'material-symbols:preview'})
+				});
+			},
+			onclick: (e: Event) => {
+				e.stopPropagation();
+				viewDept(option);
+			}
+		}),
+		h(NButton, {
+			text: true,
+			type: 'warning',
+			renderIcon() {
+				return h(NIcon, null, {
+					default: () => h(SvgIcon, {icon: 'material-symbols:box-edit-outline'})
+				});
+			},
+			onclick: (e: Event) => {
+				e.stopPropagation();
+				editDept(option);
+			}
+		}),
+		h(NButton, {
+			text: true,
+			type: 'error',
+			renderIcon() {
+				return h(NIcon, null, {
+					default: () => h(SvgIcon, {icon: 'material-symbols:delete-outline'})
+				});
+			},
+			onclick: (e: Event) => {
+				e.stopPropagation();
+				// handleDeleteDept(option);
+			}
+		})
+	]);
 };
 //查看部门
 const viewDept = (e: AdminDept.Dept) => {
-  deptModalType.value = 'view';
-  deptModalRef.value.action(e.id)
-  deptDetail = e
+	deptModalType.value = 'view';
+	deptModalRef.value.action(e.id)
+	deptDetail = e
 };
 //编辑部门
 const editDept = (e: AdminDept.Dept) => {
-  deptModalType.value = 'edit';
-  deptModalRef.value.action(e.id)
-  deptDetail = e
+	deptModalType.value = 'edit';
+	deptModalRef.value.action(e.id)
+	deptDetail = e
 };
 onMounted(() => {
-  getDeptTree()
+	getDeptTree()
 })
 </script>
 
