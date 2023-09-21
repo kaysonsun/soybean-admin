@@ -32,26 +32,26 @@
   <!-- 新增编辑部门弹窗 -->
   <dept-modal ref="deptModalRef"
               @update="deptUpdate"
-              :type="deptModalType"
               :dept-tree="deptTree"></dept-modal>
 </template>
 
 <script setup lang="ts">
 
-import {NButton, NIcon, NSpace, TreeOption} from "naive-ui";
+import {NButton, NIcon, NSpace, TreeOption, useMessage, useDialog} from "naive-ui";
 import {h, onMounted, ref} from "vue";
-import {fetchDeptTree} from "@/service/api/sys/dept";
+import {delDept, fetchDeptTree} from "@/service/api/sys/dept";
 import {useDeptStore} from "@/store/modules/sys/dept";
 import SvgIcon from "@/components/custom/svg-icon.vue";
 import DeptModal from "@/views/sys/dept/components/dept-modal.vue";
+
+const message = useMessage()
+const dialog = useDialog()
 //部门树搜索值
 const deptNamePattern = ref('')
 //搜索状态显示无关节点
 const showIrrelevantNodes = ref(false)
 //部门树加载标识
 const deptTreeLoading = ref(false)
-//部门编辑弹窗
-const deptModalType = ref<'view' | 'add' | 'edit'>('view');
 //组织架构树
 const deptTree = ref<Array<AdminDept.DeptVO>>([])
 //选中的dept暂存
@@ -67,7 +67,8 @@ const getDeptTree = async () => {
 
 //选择Dept
 const deptSelected = (keys, options) => {
-  deptStoreInfo.deptId = keys[0];
+  console.log("DEPT SELECTED")
+  console.log(keys[0])
 };
 
 //部门树更新hook
@@ -123,25 +124,39 @@ const renderSuffix = ({option}: {
       },
       onclick: (e: Event) => {
         e.stopPropagation();
-        // handleDeleteDept(option);
+        deleteDept(option);
       }
     })
   ]);
 };
 //查看部门
 const viewDept = (e: AdminDept.Dept) => {
-  deptModalType.value = 'view';
-  deptModalRef.value.action(e.id)
+  deptModalRef.value.action(e.id, 'view')
 };
 //编辑部门
 const editDept = (e: AdminDept.Dept) => {
-  deptModalType.value = 'edit';
-  deptModalRef.value.action(e.id)
+  deptModalRef.value.action(e.id, 'edit')
 };
 //新增部门
 const addDept = async () => {
-  deptModalType.value = 'add';
-  deptModalRef.value.action()
+  deptModalRef.value.action(0, 'add')
+};
+//删除部门
+const deleteDept = (e: AdminDept.Dept) => {
+  dialog.warning({
+    title: '警告',
+    content: '确认删除部门：' + e.deptName + '?',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      const res = await delDept(e.id)
+      if (!res.error) {
+        await getDeptTree()
+        message.success('删除成功')
+      }
+    }
+  })
+
 };
 
 onMounted(() => {

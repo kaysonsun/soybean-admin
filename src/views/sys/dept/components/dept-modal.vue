@@ -25,7 +25,7 @@
             />
           </n-form-item-grid-item>
           <n-form-item-grid-item :span="24" label="部门名称:" path="deptName">
-            <n-input :value="formModel.deptName"
+            <n-input v-model:value="formModel.deptName"
                      placeholder="请输入部门名称"
                      :disabled="isView"
                      :clearable="!isView"
@@ -33,7 +33,7 @@
           </n-form-item-grid-item>
           <n-form-item-grid-item :span="24" label="排序号: ">
             <n-input
-                :value="formModel.sortNum.toString()"
+                v-model:value="formModel.sortNum"
                 placeholder="请输入排序号"
                 :disabled="isView"
                 :clearable="!isView"
@@ -42,13 +42,13 @@
           </n-form-item-grid-item>
           <n-form-item-grid-item :span="24" label="描述: " path="description">
             <n-input
-                :value="formModel.description"
+                v-model:value="formModel.description"
                 :disabled="isView"
                 :clearable="!isView"
                 type="textarea"/>
           </n-form-item-grid-item>
         </n-grid>
-        <n-space v-if="props.type !== 'view'" class="w-full pt-16px" :size="24" justify="end">
+        <n-space v-if="!isView" class="w-full pt-16px" :size="24" justify="end">
           <n-button class="w-72px" @click="closeModal">取消</n-button>
           <n-button class="w-72px" type="primary" @click="handleSubmit">确定</n-button>
         </n-space>
@@ -69,13 +69,10 @@ const onlyAllowNumber = (value: string) => {
   return !value || /^\d+$/.test(value.toString());
 };
 
-export interface Props {
-  type: 'view' | 'add' | 'edit';
-  deptTree: Array<AdminDept.DeptVO>
-}
+const modalType = ref<'view' | 'add' | 'edit'>('view');
 
-const props = withDefaults(defineProps<Props>(), {
-  type: 'view'
+const props = defineProps({
+  deptTree: Array<AdminDept.DeptVO>
 });
 
 interface Emits {
@@ -85,25 +82,22 @@ interface Emits {
 const emit = defineEmits<Emits>();
 
 const title = computed(() => {
-  const titles: Record<Props['type'], string> = {
-    add: '添加部门',
-    edit: '编辑部门',
-    view: '查看部门'
+  const titles: Record<string, string> = {
+    'add': '添加部门',
+    'edit': '编辑部门',
+    'view': '查看部门'
   };
-  return titles[props.type];
+  return titles[modalType.value];
 });
 
 const isView = computed(() => {
-  console.log("IS VIEW")
-  return props.type === 'view'
+  return modalType.value === 'view'
 })
 const isAdd = computed(() => {
-  console.log("IS ADD")
-  return props.type === 'add'
+  return modalType.value === 'add'
 })
 const isEdit = computed(() => {
-  console.log("IS EDIT")
-  return props.type === 'edit'
+  return modalType.value === 'edit'
 })
 
 const modalVisible = ref<boolean>(false)
@@ -142,17 +136,15 @@ const closeModal = () => {
 
 // 通过类型调接口
 const handleTypeApi = async () => {
-  if (props.type === 'add') {
+  if (isAdd.value) {
     const res = await addDept(formModel.value);
-    if (res.code === '0') {
-      message.success('新增成功');
+    if (!res.error) {
       closeModal()
       emit('update', 'confirm');
     }
-  } else if (props.type === 'edit') {
+  } else if (isEdit.value) {
     const res = await editDept(formModel.value);
-    if (res.code === '0') {
-      message.success('更新成功');
+    if (!res.error) {
       closeModal()
       emit('update', 'confirm');
     }
@@ -177,8 +169,9 @@ const getDeptDetail = async (deptId: number) => {
   formModel.value = data;
 };
 
-const action = async (deptId: number) => {
-  if (!isAdd) {
+const action = async (deptId: number, type: 'view' | 'add' | 'edit') => {
+  modalType.value = type
+  if (!isAdd.value) {
     await getDeptDetail(deptId);
   }
   modalVisible.value = true
