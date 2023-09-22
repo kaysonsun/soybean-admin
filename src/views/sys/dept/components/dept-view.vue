@@ -55,20 +55,21 @@ const deptTreeLoading = ref(false)
 //组织架构树
 const deptTree = ref<Array<AdminDept.DeptVO>>([])
 //选中的dept暂存
-const deptStoreInfo = useDeptStore();
+const deptSelectedInfo = useDeptStore();
 
 const deptModalRef = ref(DeptModal);
 
 //获取组织架构树
 const getDeptTree = async () => {
+  deptTreeLoading.value = true
   const {data} = await fetchDeptTree()
   deptTree.value = data
+  deptTreeLoading.value = false
 }
 
 //选择Dept
 const deptSelected = (keys, options) => {
-  console.log("DEPT SELECTED")
-  console.log(keys[0])
+  deptSelectedInfo.deptId = keys[0]
 };
 
 //部门树更新hook
