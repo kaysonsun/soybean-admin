@@ -21,6 +21,7 @@
         :loading="userTableLoading"
         :pagination="pagination"
         flex-height
+        remote
         class="flex-1-hidden"
     />
   </n-card>
@@ -58,7 +59,6 @@ const columns = ref<DataTableColumns>([
     title: '账号',
     key: 'username'
   },
-
   {
     title: '角色',
     key: 'roleNames',
@@ -190,6 +190,7 @@ const resetPwd = async (x: AdminUser.User) => {
 }
 
 const getUserPage = async () => {
+  userTableLoading.value = true
   const params = {
     current: pagination.page,
     size: pagination.pageSize
@@ -199,6 +200,8 @@ const getUserPage = async () => {
   const {data} = await fetchUserPage(params);
   userList.value = data.records;
   pagination.itemCount = data.total;
+  console.log(userList)
+  userTableLoading.value = false
 }
 
 watch(
