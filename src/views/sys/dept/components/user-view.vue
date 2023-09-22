@@ -12,18 +12,17 @@
           <icon-mdi-refresh class="mr-4px text-15px" :class="{ 'animate-spin': userTableLoading }"/>
           刷新
         </n-button>
-        <!--						<column-setting v-model:columns="columns"/>-->
       </n-space>
     </n-space>
     <n-data-table
+        :single-line="false"
         :columns="columns"
         :data="userList"
         :loading="userTableLoading"
         :pagination="pagination"
-        flex-height
         remote
-        class="flex-1-hidden"
     />
+    <user-modal ref="userModalRef"></user-modal>
   </n-card>
 </template>
 
@@ -33,9 +32,10 @@ import {DataTableColumns, NButton, NSpace, NTag} from "naive-ui";
 import {h, reactive, ref, watch} from "vue";
 import {useDeptStore} from "@/store/modules/sys/dept";
 import {fetchUserPage} from "@/service/api/sys/user";
+import UserModal from "@/views/sys/dept/components/user-modal.vue";
 
 const deptSelectedInfo = useDeptStore();
-
+const userModalRef = ref(UserModal);
 const searchForm = ref<any>({
   username: '',
   realName: '',
@@ -120,8 +120,9 @@ const columns = ref<DataTableColumns>([
         h(
             NButton,
             {
+              secondary: true,
               size: 'small',
-              type: 'warning',
+              type: 'info',
               class: 'mr-10px',
               onClick: () => viewUser(row)
             },
@@ -132,6 +133,7 @@ const columns = ref<DataTableColumns>([
         h(
             NButton,
             {
+              secondary: true,
               size: 'small',
               type: 'primary',
               class: 'mr-10px',
@@ -144,6 +146,7 @@ const columns = ref<DataTableColumns>([
         h(
             NButton,
             {
+              secondary: true,
               size: 'small',
               type: 'error',
               class: 'mr-10px',
@@ -156,8 +159,9 @@ const columns = ref<DataTableColumns>([
         h(
             NButton,
             {
+              secondary: true,
               size: 'small',
-              type: 'error',
+              type: 'warning',
               class: 'mr-10px',
               onClick: () => resetPwd(row)
             },
@@ -177,7 +181,7 @@ const addUser = () => {
 
 }
 const viewUser = async (x: AdminUser.User) => {
-
+  userModalRef.value.action(x.id, 'view')
 }
 const editUser = async (x: AdminUser.User) => {
 
@@ -200,7 +204,6 @@ const getUserPage = async () => {
   const {data} = await fetchUserPage(params);
   userList.value = data.records;
   pagination.itemCount = data.total;
-  console.log(userList)
   userTableLoading.value = false
 }
 
