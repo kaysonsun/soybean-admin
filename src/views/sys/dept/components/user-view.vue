@@ -108,10 +108,6 @@ const columns = ref<DataTableColumns>([
     }
   },
   {
-    title: '部门',
-    key: 'deptName'
-  },
-  {
     title: '操作',
     key: 'actions',
     width: 300,

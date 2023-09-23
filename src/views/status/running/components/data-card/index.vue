@@ -40,8 +40,6 @@ const cardData = ref<CardData[]>([]);
 
 const getBizMetrics = async () => {
 	const {data} = await fetchBizMetrics()
-	console.log("MARK-02")
-	console.log(data)
 	cardData.value = [
 		{
 			id: 'userCount',

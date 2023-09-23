@@ -30,11 +30,11 @@
         <div ref="memLineRef" class="w-full h-360px"></div>
       </n-card>
     </n-grid-item>
-<!--    <n-grid-item span="0:24 640:24 1024:8">-->
-<!--      <n-card :bordered="false" class="rounded-8px shadow-sm">-->
-<!--        <div ref="memLineRef" class="w-full h-360px"></div>-->
-<!--      </n-card>-->
-<!--    </n-grid-item>-->
+    <!--    <n-grid-item span="0:24 640:24 1024:8">-->
+    <!--      <n-card :bordered="false" class="rounded-8px shadow-sm">-->
+    <!--        <div ref="memLineRef" class="w-full h-360px"></div>-->
+    <!--      </n-card>-->
+    <!--    </n-grid-item>-->
     <!--    <n-grid-item span="0:24 640:24 1024:8">-->
     <!--      <n-card :bordered="false" class="rounded-8px shadow-sm">-->
     <!--        <div ref="pieRef" class="w-full h-360px"></div>-->
@@ -193,8 +193,6 @@ const {domRef: memLineRef} = useEcharts(memLineOptions)
 const getSysMetrics = async () => {
   const {data} = await fetchSysMetrics()
   if (data) {
-    console.log("MARK-03")
-    console.log(data)
     for (let i = 0; i < data.cpu.length; i++) {
       if (cpuLineOptions.value.series) {
         cpuLineOptions.value.series.data.push([data.cpu[i].ts, data.cpu[i].used])

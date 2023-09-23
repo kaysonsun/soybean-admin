@@ -32,8 +32,24 @@
                                  label="手机"
                                  path="mobilePhone">
             <n-input :disabled="isView"
+                     :placeholder="isView?'无':'请输入手机号'"
                      clearable
                      v-model:value="formModel.mobilePhone"/>
+          </n-form-item-grid-item>
+          <n-form-item-grid-item :span="12"
+                                 label="角色"
+                                 path="roleIds">
+            <n-select v-model:value="formModel.roleIds"
+                      :placeholder="isView?'无':'请选择角色'"
+                      filterable
+                      :disabled="isView"
+                      multiple
+                      label-field="roleName"
+                      value-field="id"
+                      :default-value="formModel.roleIds"
+                      :clear-filter-after-select="false"
+                      :options="roleOptions"
+                      clearable/>
           </n-form-item-grid-item>
           <n-form-item-grid-item :span="12"
                                  label="账号类型"
@@ -56,33 +72,7 @@
                            :is-date-disabled="disableDate"
                            clearable/>
           </n-form-item-grid-item>
-          <n-form-item-grid-item :span="12"
-                                 label="角色"
-                                 path="roleIds">
-            <n-select v-model:value="formModel.roleIds"
-                      filterable
-                      :disabled="isView"
-                      multiple
-                      label-field="roleName"
-                      value-field="id"
-                      :default-value="formModel.roleIds"
-                      :clear-filter-after-select="false"
-                      :options="roleOptions"
-                      clearable/>
-          </n-form-item-grid-item>
-          <n-form-item-grid-item :span="12"
-                                 label="部门"
-                                 path="deptId">
-            <n-tree-select v-model:value="formModel.deptId"
-                           :disabled="isView"
-                           filterable
-                           :clear-filter-after-select="false"
-                           label-field="deptName"
-                           key-field="id"
-                           children-field="children"
-                           :options="deptOptions"
-                           clearable/>
-          </n-form-item-grid-item>
+
           <n-form-item-grid-item :span="24"
                                  label="备注"
                                  path="description">
@@ -93,7 +83,7 @@
                      show-count/>
           </n-form-item-grid-item>
         </n-grid>
-        <n-space class="w-full pt-16px" :size="24" justify="end">
+        <n-space v-if="!isView" class="w-full pt-16px" :size="24" justify="end">
           <n-button class="w-72px" @click="closeModal">取消</n-button>
           <n-button class="w-72px" type="primary" @click="handleSubmit">确定</n-button>
         </n-space>
@@ -107,6 +97,8 @@ import {computed, ref, onMounted, onUpdated, watchEffect} from 'vue';
 import type {FormInst} from 'naive-ui';
 import {useMessage} from 'naive-ui';
 import {REGEXP_EMAIL, REGEXP_PHONE} from '@/config';
+import {fetchUserDetail} from "@/service/api/sys/user";
+import {fetchRoleDict} from "@/service/api/sys/role";
 
 const userVisible = ref<boolean>(false)
 
@@ -117,6 +109,32 @@ interface Emits {
 const message = useMessage();
 const emit = defineEmits<Emits>();
 const modalType = ref<'view' | 'add' | 'edit'>('view');
+const roleOptions = ref<AdminRole.Role[]>([]);
+// 禁用时间范围
+const disableDate = (ts: number) => {
+  return ts < Date.now();
+};
+// 账号类型
+const accountTypeList = ref([
+  {
+    label: '永久',
+    value: 'PERMANENT'
+  },
+  {
+    label: '临时',
+    value: 'TEMPORARILY'
+  }
+]);
+// 规则
+const rules = computed(() => {
+  return {
+    username: [{required: !isView.value, message: '请输入账号'}],
+    realName: [{required: !isView.value, message: '请输入姓名'}],
+    accountType: [{required: !isView.value, message: '请选择账号类型'}],
+    expiredAt: [{required: !isView.value && formModel.value.accountType === 'TEMPORARILY', message: '请设置账号到期时间'}],
+    mobilePhone: [{pattern: REGEXP_PHONE, message: '手机号码格式错误', trigger: 'input'}],
+  }
+})
 
 const title = computed(() => {
   const titles: Record<string, string> = {
@@ -135,6 +153,19 @@ const isAdd = computed(() => {
 const isEdit = computed(() => {
   return modalType.value === 'edit'
 })
+
+const getUserDetail = async (userId: number) => {
+  const {data} = await fetchUserDetail(userId);
+  if (!data.error) {
+    formModel.value = data;
+    accountType.value = formModel.value.accountType;
+  }
+};
+
+const getRoleDict = async () => {
+  const {data} = await fetchRoleDict();
+  roleOptions.value = data;
+};
 // ###################
 
 const formRef = ref<HTMLElement & FormInst>();
@@ -166,38 +197,7 @@ const formModelInit = ref<any>({
   postIds: [],
   description: ''
 });
-// 规则
-const rules = computed(() => {
-  return {
-    username: [{required: !isView.value, message: '请输入账号'}],
-    realName: [{required: !isView.value, message: '请输入姓名'}],
-    accountType: [{required: !isView.value, message: '请选择账号类型'}],
-    expiredAt: [{required: formModel.value.accountType === 'TEMPORARILY', message: '请设置账号到期时间'}],
-    mobilePhone: [{pattern: REGEXP_PHONE, message: '手机号码格式错误', trigger: 'input'}],
-    email: [{pattern: REGEXP_EMAIL, message: '邮箱格式错误', trigger: 'blur'}],
-    deptId: [{required: !isView.value, message: '请选择部门'}]
-  }
-})
 
-// 禁用时间范围
-const disableDate = (ts: number) => {
-  return ts < Date.now();
-};
-// 账号类型
-const accountTypeList = ref([
-  {
-    label: '永久',
-    value: 'PERMANENT'
-  },
-  {
-    label: '临时',
-    value: 'TEMPORARILY'
-  }
-]);
-// 部门
-const deptOptions = ref<any[]>([]);
-const roleOptions = ref<any[]>([]);
-const positionOptions = ref<any[]>([]);
 
 /** 类型值变化 */
 const updateAccountType = (value: null) => {
@@ -241,35 +241,17 @@ const handleSubmit = () => {
   });
 };
 
-/** 获取用户信息 */
-const getUserDetail = async () => {
-  // const {data} = await userDetail(props.keyId);
-  // formModel.value = data;
-  // accountType.value = formModel.value.accountType;
-};
-
-/** 获取所有的角色和岗位 */
-const getRolePost = async () => {
-  // const {data: roleData} = await roleAll();
-  // roleOptions.value = roleData;
-  //
-  // const {data: postData} = await postAll();
-  // positionOptions.value = postData;
-  //
-  // const {data: deptData} = await deptTree();
-  // deptOptions.value = deptData;
-};
 
 const action = async (userId: number, type: 'view' | 'add' | 'edit') => {
   modalType.value = type
-  // if (!isAdd.value) {
-  //   await getDeptDetail(deptId);
-  // }
+  if (!isAdd.value) {
+    await getUserDetail(userId);
+  }
   userVisible.value = true
 }
 defineExpose({action})
 onMounted(() => {
-  getRolePost();
+  getRoleDict();
 });
 </script>
 
