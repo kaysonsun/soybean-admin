@@ -97,7 +97,7 @@ import {computed, ref, onMounted, onUpdated, watchEffect} from 'vue';
 import type {FormInst} from 'naive-ui';
 import {useMessage} from 'naive-ui';
 import {REGEXP_EMAIL, REGEXP_PHONE} from '@/config';
-import {editUser, fetchUserDetail} from "@/service/api/sys/user";
+import {addUser, editUser, fetchUserDetail} from "@/service/api/sys/user";
 import {fetchRoleDict} from "@/service/api/sys/role";
 
 const userVisible = ref<boolean>(false)
@@ -201,14 +201,11 @@ const closeModal = () => {
 /** 新增或者编辑用户 */
 const updateUser = async () => {
   if (isAdd.value) {
-    // const res = await addUser(formModel.value);
-    // if (res.code === '0') {
-    //   message.success('新增成功');
-    //   closeModal()
-    //   emit('update', 'confirm');
-    // } else {
-    //   message.error(res.msg);
-    // }
+    const res = await addUser(formModel.value);
+    if (!res.error) {
+      closeModal()
+      emit('update', 'confirm');
+    }
   } else if (isEdit.value) {
     const res = await editUser(formModel.value);
     if (!res.error) {

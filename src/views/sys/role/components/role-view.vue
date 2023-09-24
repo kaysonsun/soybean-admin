@@ -55,60 +55,12 @@ const pagination = reactive({
 
 const columns = ref<DataTableColumns>([
   {
-    title: '姓名',
-    key: 'realName'
+    title: '角色名称',
+    key: 'roleName'
   },
   {
     title: '账号',
     key: 'username'
-  },
-  {
-    title: '角色',
-    key: 'roleNames',
-    render(row: any) {
-      const tags = row.roleNames.map((tagKey: any) => {
-        return h(
-            NTag,
-            {
-              style: {
-                marginRight: '6px'
-              },
-              type: 'info',
-              bordered: false
-            },
-            {
-              default: () => tagKey
-            }
-        );
-      });
-      return tags;
-    }
-  },
-  {
-    title: '账号类型',
-    key: 'accountType',
-    render(row: any) {
-      return h(
-          NTag,
-          {
-            type: row.accountType === 'PERMANENT' ? 'success' : 'error',
-            bordered: false
-          },
-          {
-            default: () => row.accountType === 'PERMANENT' ? '永久' : '临时',
-          }
-      );
-    }
-  },
-  {
-    title: '到期时间',
-    key: 'expiredAt',
-    render(row) {
-      if (row.accountType === 'PERMANENT') {
-        return '从不';
-      }
-      return row.expiredAt;
-    }
   },
   {
     title: '操作',
@@ -165,7 +117,7 @@ const columns = ref<DataTableColumns>([
               onClick: () => resetPwd(row)
             },
             {
-              default: () => '重置密码'
+              default: () => '配置权限'
             }
         )
       ];

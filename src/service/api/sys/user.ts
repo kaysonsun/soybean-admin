@@ -25,4 +25,8 @@ export function editUser(user: AdminUser.UserEditDTO) {
     return request.post<number>('/user', user);
 }
 
+export function addUser(user: AdminUser.UserEditDTO) {
+    return request.put<number>('/user', user);
+}
+
 
