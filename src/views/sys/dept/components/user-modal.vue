@@ -97,7 +97,7 @@ import {computed, ref, onMounted, onUpdated, watchEffect} from 'vue';
 import type {FormInst} from 'naive-ui';
 import {useMessage} from 'naive-ui';
 import {REGEXP_EMAIL, REGEXP_PHONE} from '@/config';
-import {fetchUserDetail} from "@/service/api/sys/user";
+import {editUser, fetchUserDetail} from "@/service/api/sys/user";
 import {fetchRoleDict} from "@/service/api/sys/role";
 
 const userVisible = ref<boolean>(false)
@@ -131,7 +131,10 @@ const rules = computed(() => {
     username: [{required: !isView.value, message: '请输入账号'}],
     realName: [{required: !isView.value, message: '请输入姓名'}],
     accountType: [{required: !isView.value, message: '请选择账号类型'}],
-    expiredAt: [{required: !isView.value && formModel.value.accountType === 'TEMPORARILY', message: '请设置账号到期时间'}],
+    expiredAt: [{
+      required: !isView.value && formModel.value.accountType === 'TEMPORARILY',
+      message: '请设置账号到期时间'
+    }],
     mobilePhone: [{pattern: REGEXP_PHONE, message: '手机号码格式错误', trigger: 'input'}],
   }
 })
@@ -171,31 +174,17 @@ const getRoleDict = async () => {
 const formRef = ref<HTMLElement & FormInst>();
 const accountType = ref(null);
 // form值
-const formModel = ref<any>({
-  username: null,
-  realName: null,
-  mobilePhone: null,
-  email: null,
-  accountType: null,
-  expiredAt: null,
+const formModel = ref<AdminUser.UserEditDTO>({
+  id: 0,
+  username: '',
+  realName: '',
+  mobilePhone: '',
+  accountType: '',
+  expiredAt: '',
   roleIds: [],
-  roleNames: '',
-  deptId: '',
-  postIds: [],
-  description: ''
-});
-const formModelInit = ref<any>({
-  username: null,
-  realName: null,
-  mobilePhone: null,
-  email: null,
-  accountType: null,
-  expiredAt: null,
-  roleIds: [],
-  roleNames: '',
-  deptId: '',
-  postIds: [],
-  description: ''
+  deptId: 0,
+  description: '',
+  version: 0
 });
 
 
@@ -210,8 +199,8 @@ const closeModal = () => {
 };
 
 /** 新增或者编辑用户 */
-const updataUser = async () => {
-  if (isAdd) {
+const updateUser = async () => {
+  if (isAdd.value) {
     // const res = await addUser(formModel.value);
     // if (res.code === '0') {
     //   message.success('新增成功');
@@ -220,15 +209,12 @@ const updataUser = async () => {
     // } else {
     //   message.error(res.msg);
     // }
-  } else if (isEdit) {
-    // const res = await editUser(formModel.value);
-    // if (res.code === '0') {
-    //   message.success('更新成功');
-    //   closeModal()
-    //   emit('update', 'confirm');
-    // } else {
-    //   message.error(res.msg);
-    // }
+  } else if (isEdit.value) {
+    const res = await editUser(formModel.value);
+    if (!res.error) {
+      closeModal()
+      emit('update', 'confirm');
+    }
   }
 };
 
@@ -236,7 +222,7 @@ const updataUser = async () => {
 const handleSubmit = () => {
   formRef.value?.validate(errors => {
     if (!errors) {
-      updataUser();
+      updateUser();
     }
   });
 };

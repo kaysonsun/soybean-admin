@@ -13,9 +13,9 @@ export function addDept(dept: AdminDept.Dept) {
 }
 
 export function editDept(dept: AdminDept.Dept) {
-    return request.post<any>('/dept', dept);
+    return request.post<number>('/dept', dept);
 }
 
 export function delDept(deptId: number) {
-    return request.delete<any>(`/dept?id=${deptId}`);
+    return request.delete<number>(`/dept?id=${deptId}`);
 }

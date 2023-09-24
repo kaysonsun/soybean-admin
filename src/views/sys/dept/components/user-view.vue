@@ -28,12 +28,14 @@
 
 <script setup lang="ts">
 
-import {DataTableColumns, NButton, NSpace, NTag} from "naive-ui";
+import {DataTableColumns, NButton, NSpace, NTag, useDialog, useMessage} from "naive-ui";
 import {h, reactive, ref, watch} from "vue";
 import {useDeptStore} from "@/store/modules/sys/dept";
-import {fetchUserPage} from "@/service/api/sys/user";
+import {delUserById, fetchInitPwd, fetchUserPage, resetPwdById} from "@/service/api/sys/user";
 import UserModal from "@/views/sys/dept/components/user-modal.vue";
 
+const message = useMessage()
+const dialog = useDialog()
 const deptSelectedInfo = useDeptStore();
 const userModalRef = ref(UserModal);
 const searchForm = ref<any>({
@@ -180,13 +182,39 @@ const viewUser = async (x: AdminUser.User) => {
   userModalRef.value.action(x.id, 'view')
 }
 const editUser = async (x: AdminUser.User) => {
-
+  userModalRef.value.action(x.id, 'edit')
 }
 const delUser = async (x: AdminUser.User) => {
-
+  dialog.warning({
+    title: '警告',
+    content: '确认删除用户：' + x.username + ' x?',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      const res = await delUserById(x.id)
+      if (!res.error) {
+        await getUserPage()
+        message.success('删除成功')
+      }
+    }
+  })
 }
 const resetPwd = async (x: AdminUser.User) => {
-
+  const {data} = await fetchInitPwd()
+  dialog.warning({
+    title: '警告',
+    content: '用户：' + x.username + ' 的密码将重置为：' + data,
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      const res = await resetPwdById(x.id)
+      if (!res.error) {
+        await getUserPage()
+        message.success('重置成功')
+      }
+    }
+  })
+  await resetPwdById(x.id)
 }
 
 const getUserPage = async () => {
