@@ -1,7 +1,15 @@
 declare namespace AdminRole {
-	type Role = {
-		id: number;
-		roleName: string;
-		description: string;
-	}
+    interface Role {
+        id: number;
+        roleName: string;
+        description: string;
+        createTime: string;
+    }
+
+    interface RoleEditDTO {
+        id: number;
+        roleName: string;
+        description: string;
+        version: number;
+    }
 }

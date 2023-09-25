@@ -6,15 +6,15 @@ export function fetchUserPage(params: any) {
 }
 
 export function fetchUserDetail(userId: number) {
-    return request.get<AdminUser.User>(`/user/detail?userId=${userId}`);
+    return request.get<AdminUser.User>(`/user/detail?id=${userId}`);
 }
 
 export function delUserById(userId: number) {
-    return request.delete(`/user?userId=${userId}`);
+    return request.delete(`/user?id=${userId}`);
 }
 
 export function resetPwdById(userId: number) {
-    return request.post(`/user/password/init?userId=${userId}`);
+    return request.post(`/user/password/init?id =${userId}`);
 }
 
 export function fetchInitPwd() {

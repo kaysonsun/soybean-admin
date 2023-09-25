@@ -99,6 +99,7 @@ import {useMessage} from 'naive-ui';
 import {REGEXP_EMAIL, REGEXP_PHONE} from '@/config';
 import {addUser, editUser, fetchUserDetail} from "@/service/api/sys/user";
 import {fetchRoleDict} from "@/service/api/sys/role";
+import {useDeptStore} from "@/store/modules/sys/dept";
 
 const userVisible = ref<boolean>(false)
 
@@ -110,6 +111,7 @@ const message = useMessage();
 const emit = defineEmits<Emits>();
 const modalType = ref<'view' | 'add' | 'edit'>('view');
 const roleOptions = ref<AdminRole.Role[]>([]);
+const deptSelectedInfo = useDeptStore();
 // 禁用时间范围
 const disableDate = (ts: number) => {
   return ts < Date.now();
@@ -201,6 +203,7 @@ const closeModal = () => {
 /** 新增或者编辑用户 */
 const updateUser = async () => {
   if (isAdd.value) {
+    formModel.value.deptId = deptSelectedInfo.deptId
     const res = await addUser(formModel.value);
     if (!res.error) {
       closeModal()

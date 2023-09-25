@@ -8,7 +8,7 @@
         </n-button>
       </n-space>
       <n-space align="center" :size="18">
-        <n-button size="small" type="primary" @click="">
+        <n-button size="small" type="primary" @click="getUserPage">
           <icon-mdi-refresh class="mr-4px text-15px" :class="{ 'animate-spin': userTableLoading }"/>
           刷新
         </n-button>
