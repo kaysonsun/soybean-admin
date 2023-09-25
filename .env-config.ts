@@ -3,15 +3,15 @@ type ServiceEnv = Record<ServiceEnvType, ServiceEnvConfig>;
 
 /** 不同请求服务的环境配置 */
 const serviceEnv: ServiceEnv = {
-  dev: {
-    url: 'http://localhost:8080'
-  },
-  test: {
-    url: 'http://localhost:8080'
-  },
-  prod: {
-    url: 'http://localhost:8080'
-  }
+    dev: {
+        url: 'http://localhost:7610'
+    },
+    test: {
+        url: 'http://localhost:7610'
+    },
+    prod: {
+        url: 'http://localhost:7610'
+    }
 };
 
 /**
@@ -19,12 +19,12 @@ const serviceEnv: ServiceEnv = {
  * @param env 环境
  */
 export function getServiceEnvConfig(env: ImportMetaEnv): ServiceEnvConfigWithProxyPattern {
-  const { VITE_SERVICE_ENV = 'dev' } = env;
+    const {VITE_SERVICE_ENV = 'dev'} = env;
 
-  const config = serviceEnv[VITE_SERVICE_ENV];
+    const config = serviceEnv[VITE_SERVICE_ENV];
 
-  return {
-    ...config,
-    proxyPattern: '/api'
-  };
+    return {
+        ...config,
+        proxyPattern: '/api'
+    };
 }
